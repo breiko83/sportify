@@ -1,4 +1,3 @@
-import { recomposeColor } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import spotify from "spotify.js";
 
@@ -6,13 +5,12 @@ const Recommendations = ({ genres, cadence, setTracks }) => {
   const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
-    spotify.getRecommendations(genres, cadence).then((tracks) => {
-      console.log(tracks);
+    spotify.getRecommendations(genres, cadence).then((tracks) => {      
       if(tracks.length > 0)
         setTracks(tracks.map((track) => track.uri));
       setRecommendations(tracks);
     });
-  }, [cadence, genres]);
+  }, [cadence, genres, setTracks]);
 
   return (
     <div>

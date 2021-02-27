@@ -92,7 +92,7 @@ const spotify = {
       });
   },
   playerInfo: () => {
-    const access_token = localStorage.getItem("access_token");
+    // const access_token = localStorage.getItem("access_token");
     return axios
       .get("https://api.spotify.com/v1/me/player")
       .then(console.log)
@@ -120,10 +120,7 @@ const spotify = {
   },
   transferPlayback: (device_id) => {
     const access_token = localStorage.getItem("access_token");
-    const params = {};
-
-    console.log(device_id);
-
+    
     return axios
       .put(
         "https://api.spotify.com/v1/me/player",
@@ -134,18 +131,15 @@ const spotify = {
           },
         }
       )
-
   },
   play: (device_id, uris = []) => {
     const access_token = localStorage.getItem("access_token");
-    const params = {};
-
-    console.log(device_id);
+    const params = { device_id: device_id, uris: uris };
 
     return axios
       .put(
         "https://api.spotify.com/v1/me/player/play",
-        { device_id: device_id, uris: uris },
+        params,
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
