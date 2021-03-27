@@ -53,10 +53,10 @@ const spotify = {
     console.log(genres, cadence);
     const access_token = localStorage.getItem("access_token");
     const params = {
-      seed_genres: genres.join(','),
+      seed_genres: genres.join(","),
       type: "track",
-      min_tempo: cadence * 2 - 10,
-      max_tempo: cadence * 2 + 10,
+      min_tempo: cadence * 2 - 5,
+      max_tempo: cadence * 2 + 5,
     };
     return axios
       .get("https://api.spotify.com/v1/recommendations", {
@@ -92,11 +92,39 @@ const spotify = {
       });
   },
   playerInfo: () => {
-    // const access_token = localStorage.getItem("access_token");
+    const access_token = localStorage.getItem("access_token");
+
     return axios
-      .get("https://api.spotify.com/v1/me/player")
-      .then(console.log)
-      .catch(({ response }) => console.log(response.data.error));
+      .get("https://api.spotify.com/v1/me/player", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then(({ data }) => data)
+      .catch(({ response }) => {
+        console.log(response.data.error);
+
+        if (response.data.error.status === 401)
+          spotify.refreshToken(spotify.playerInfo());
+        return [];
+      });
+  },
+  currentlyPlaying: () => {
+    const access_token = localStorage.getItem("access_token");
+    return axios
+      .get("https://api.spotify.com/v1/me/player/currently-playing", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then(({ data }) => data.item)
+      .catch(({ response }) => {
+        console.log(response.data.error);
+
+        if (response.data.error.status === 401)
+          spotify.refreshToken(spotify.currentlyPlaying());
+        return [];
+      });
   },
   getDevices: () => {
     const access_token = localStorage.getItem("access_token");
@@ -120,32 +148,39 @@ const spotify = {
   },
   transferPlayback: (device_id) => {
     const access_token = localStorage.getItem("access_token");
-    
-    return axios
-      .put(
-        "https://api.spotify.com/v1/me/player",
-        { device_ids: [device_id], play: false },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      )
+
+    return axios.put(
+      "https://api.spotify.com/v1/me/player",
+      { device_ids: [device_id], play: true },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
   },
-  play: (device_id, uris = []) => {
+  play: (
+    device_id = localStorage.getItem("device"),
+    uris = JSON.parse(localStorage.getItem("recommendations")).map(
+      (item) => item.uri
+    ),
+    offset = 0
+  ) => {
     const access_token = localStorage.getItem("access_token");
-    const params = { device_id: device_id, uris: uris };
+    const params = {
+      device_id: device_id,
+      uris: uris,
+      offset: { position: offset },
+    };
+
+    console.log(params);
 
     return axios
-      .put(
-        "https://api.spotify.com/v1/me/player/play",
-        params,
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      )
+      .put("https://api.spotify.com/v1/me/player/play", params, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
       .catch(({ response }) => console.log(response.data.error));
   },
   pause: () => {
@@ -154,6 +189,30 @@ const spotify = {
 
     return axios
       .put("https://api.spotify.com/v1/me/player/pause", params, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .catch(({ response }) => console.log(response.data.error));
+  },
+  next: () => {
+    const access_token = localStorage.getItem("access_token");
+    const params = {};
+
+    return axios
+      .post("https://api.spotify.com/v1/me/player/next", params, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .catch(({ response }) => console.log(response.data.error));
+  },
+  previous: () => {
+    const access_token = localStorage.getItem("access_token");
+    const params = {};
+
+    return axios
+      .post("https://api.spotify.com/v1/me/player/previous", params, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
@@ -169,6 +228,18 @@ const spotify = {
         },
       })
       .then((data) => console.log(JSON.stringify(data)))
+      .catch(({ response }) => console.log(response.data.error));
+  },
+  getAudioFeatures: (id) => {
+    const access_token = localStorage.getItem("access_token");
+    console.log(id);
+
+    return axios
+      .get(`https://api.spotify.com/v1/audio-features/${id}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
       .catch(({ response }) => console.log(response.data.error));
   },
 };

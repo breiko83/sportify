@@ -3,7 +3,6 @@ import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
 
 const Cadence = ({ cadence, setCadence }) => {
-
   const [value, setValue] = useState(cadence);
 
   function valuetext(value) {
@@ -11,7 +10,7 @@ const Cadence = ({ cadence, setCadence }) => {
   }
 
   return (
-    <div style={{ width: "300px" }}>
+    <div>
       <Typography id="cadence-slider" gutterBottom>
         Cadence
       </Typography>

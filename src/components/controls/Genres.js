@@ -14,7 +14,7 @@ import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import Chip from "@material-ui/core/Chip";
 
-const Genres = ({selected, setSelected}) => {
+const Genres = ({ selected, setSelected }) => {
   const [genres, setGenres] = useState(selected);
   const [availableGenres, setAvailableGenres] = useState([]);
   const [drawerVisibility, setDrawerVisibility] = useState(false);
@@ -33,8 +33,10 @@ const Genres = ({selected, setSelected}) => {
   };
 
   const showAllGenres = () => {
-    if(availableGenres.length === 0)
-      spotify.getAvailableGenreSeeds().then(genres => setAvailableGenres(genres));
+    if (availableGenres.length === 0)
+      spotify
+        .getAvailableGenreSeeds()
+        .then((genres) => setAvailableGenres(genres));
     setDrawerVisibility(!drawerVisibility);
   };
 
@@ -50,18 +52,36 @@ const Genres = ({selected, setSelected}) => {
   }
 
   return (
-    <div>
-      {genres.map((genre, index) => (
-        <Chip
-          key={index}
-          label={genre}
-          size="small"
-          variant="outlined"
-          icon={<Favorite />}
-          onDelete={() => handleDeleteGenre(genre)}
-        />
-      ))}
-      <Button onClick={() => showAllGenres()}>Change Genre</Button>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        {genres.map((genre, index) => (
+          <Chip
+            color="secondary"
+            key={index}
+            label={genre}
+            size="small"
+            variant="outlined"
+            icon={<Favorite />}
+            onDelete={() => handleDeleteGenre(genre)}
+            style={{ margin: "2px" }}
+          />
+        ))}
+      </div>
+      <Button onClick={() => showAllGenres()} color="primary">
+        Change Genre
+      </Button>
       <Drawer
         anchor="right"
         open={drawerVisibility}

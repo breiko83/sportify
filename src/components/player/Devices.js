@@ -1,50 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 
 // UI
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import Input from "@material-ui/core/Input";
+import DevicesIcon from "@material-ui/icons/Devices";
 
-// API
-import spotify from "spotify.js";
-
-const Devices = ({ device, setDevice }) => {
-  const [devices, setDevices] = useState([]);
-
-  function getDevices() {
-    spotify.getDevices().then((devices) => {
-      console.log(devices);
-
-      setDevices(
-        devices.map((device) => ({ name: device.name, id: device.id }))
-      );
-      // select first device as default
-      // setDevice(devices[0].id);
-    });
-  }
-
-  function handleChange(value) {
-    console.log(value);
-    spotify.transferPlayback(value);
-  }
-
+const Devices = ({ device, devices, setDevice }) => {
   return (
     <div>
-      <FormControl>
-        <InputLabel id="devices-label">Devices</InputLabel>
-        <Select
-          labelId="devices-label"
-          value={device}
-          onChange={(e) => handleChange(e.target.value)}
-          input={<Input />}
-          onOpen={getDevices}
-        >
+      <FormControl style={{ width: "100%" }}>
+        <InputLabel id="devices-label">
+          <DevicesIcon />
+        </InputLabel>
+        <Select native onChange={(e) => setDevice(e.target.value)}>
           {devices.map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
+            <option value={item.id}>{item.name}</option>
           ))}
         </Select>
       </FormControl>
