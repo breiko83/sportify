@@ -3,7 +3,7 @@ import axios from "axios";
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
 
-const REDIRECT_URI = process.env.REDIRECT_URI;
+const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
 const SCOPES =
   "user-read-private user-read-email streaming user-read-playback-state user-modify-playback-state user-read-currently-playing";
 
